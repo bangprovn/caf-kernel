@@ -364,6 +364,7 @@ int mdss_mdp_bus_scale_set_quota(u64 ab_quota, u64 ib_quota)
 
 		new_uc_idx = (mdss_res->curr_bw_uc_idx %
 			(bw_table->num_usecases - 1)) + 1;
+<<<<<<< HEAD
 
 		for (i = 0; i < mdss_res->axi_port_cnt; i++) {
 			vect = &bw_table->usecase[mdss_res->curr_bw_uc_idx].
@@ -380,6 +381,24 @@ int mdss_mdp_bus_scale_set_quota(u64 ab_quota, u64 ib_quota)
 			vect->ab = ab_quota;
 			vect->ib = ib_quota;
 
+=======
+
+		for (i = 0; i < mdss_res->axi_port_cnt; i++) {
+			vect = &bw_table->usecase[mdss_res->curr_bw_uc_idx].
+				vectors[i];
+
+			/* avoid performing updates for small changes */
+			if ((ALIGN(ab_quota, size) == ALIGN(vect->ab, size)) &&
+			    (ALIGN(ib_quota, size) == ALIGN(vect->ib, size))) {
+				pr_debug("skip bus scaling, no changes\n");
+				return 0;
+			}
+
+			vect = &bw_table->usecase[new_uc_idx].vectors[i];
+			vect->ab = ab_quota;
+			vect->ib = ib_quota;
+
+>>>>>>> 5c17b84... msm: mdss: Move bus scale table implementation to device-tree
 			pr_debug("uc_idx=%d path_idx=%d ab=%llu ib=%llu\n",
 				new_uc_idx, i, vect->ab, vect->ib);
 		}

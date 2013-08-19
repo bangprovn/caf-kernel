@@ -145,10 +145,13 @@ struct mdss_data_type {
 	u32 bus_hdl;
 	struct msm_bus_scale_pdata *bus_scale_table;
 
+<<<<<<< HEAD
 	struct mdss_fudge_factor ab_factor;
 	struct mdss_fudge_factor ib_factor;
 	struct mdss_fudge_factor clk_factor;
 
+=======
+>>>>>>> 5c17b84... msm: mdss: Move bus scale table implementation to device-tree
 	struct mdss_hw_settings *hw_settings;
 
 	struct mdss_mdp_pipe *vig_pipes;
