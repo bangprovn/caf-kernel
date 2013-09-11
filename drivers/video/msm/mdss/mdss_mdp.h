@@ -528,7 +528,11 @@ int mdss_mdp_ctl_start(struct mdss_mdp_ctl *ctl, bool handoff);
 int mdss_mdp_ctl_stop(struct mdss_mdp_ctl *ctl);
 int mdss_mdp_ctl_intf_event(struct mdss_mdp_ctl *ctl, int event, void *arg);
 int mdss_mdp_perf_calc_pipe(struct mdss_mdp_pipe *pipe,
+<<<<<<< HEAD
 	struct mdss_mdp_perf_params *perf, struct mdss_mdp_img_rect *roi);
+=======
+		struct mdss_mdp_perf_params *perf, int tune);
+>>>>>>> bb797bd... mdss: use alternate lcd timings in mdp perf check
 int mdss_mdp_ctl_notify(struct mdss_mdp_ctl *ctl, int event);
 void mdss_mdp_ctl_notifier_register(struct mdss_mdp_ctl *ctl,
 	struct notifier_block *notifier);

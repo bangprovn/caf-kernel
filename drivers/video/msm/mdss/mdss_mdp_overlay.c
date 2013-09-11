@@ -267,7 +267,12 @@ static int __mdp_pipe_tune_perf(struct mdss_mdp_pipe *pipe)
 	int rc;
 
 	for (;;) {
+<<<<<<< HEAD
 		rc = mdss_mdp_perf_calc_pipe(pipe, &perf, NULL);
+=======
+		rc = mdss_mdp_perf_calc_pipe(pipe, &perf,
+			pipe->flags & MDP_SECURE_OVERLAY_SESSION);
+>>>>>>> bb797bd... mdss: use alternate lcd timings in mdp perf check
 
 		if (!rc && (perf.mdp_clk_rate <= mdata->max_mdp_clk_rate))
 			break;
