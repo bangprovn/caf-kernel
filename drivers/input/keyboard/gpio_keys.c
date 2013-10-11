@@ -10,7 +10,7 @@
  */
 
 #include <linux/module.h>
-
+#include <mach/board_lge.h>
 #include <linux/init.h>
 #include <linux/fs.h>
 #include <linux/interrupt.h>
@@ -30,7 +30,7 @@
 #include <linux/of_gpio.h>
 #include <linux/spinlock.h>
 
-#if defined CONFIG_LGE_PM_PWR_KEY_FOR_CHG_LOGO || defined (CONFIG_MACH_MSM8226_E7WIFI) || defined (CONFIG_MACH_MSM8226_E8WIFI) || defined (CONFIG_MACH_MSM8226_E9WIFI) || defined (CONFIG_MACH_MSM8226_E9WIFIN)
+#if defined (CONFIG_LGE_PM_PWR_KEY_FOR_CHG_LOGO) || defined (CONFIG_MACH_MSM8226_E7WIFI) || defined (CONFIG_MACH_MSM8226_E8WIFI) || defined (CONFIG_MACH_MSM8226_E9WIFI) || defined (CONFIG_MACH_MSM8226_E9WIFIN)
 #include <mach/board_lge.h>
 #endif
 

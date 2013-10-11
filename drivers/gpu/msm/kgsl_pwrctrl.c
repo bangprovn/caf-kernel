@@ -231,10 +231,10 @@ static int kgsl_pwrctrl_thermal_pwrlevel_store(struct device *dev,
 	if (ret != 1)
 		return count;
 
-	if (ret)
-		return ret;
+	if (level < 0)
+		return count;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 
 	if (level > pwr->num_pwrlevels - 2)
 		level = pwr->num_pwrlevels - 2;
@@ -250,7 +250,7 @@ static int kgsl_pwrctrl_thermal_pwrlevel_store(struct device *dev,
 	 */
 	if (pwr->thermal_pwrlevel > pwr->active_pwrlevel)
 		kgsl_pwrctrl_pwrlevel_change(device, pwr->thermal_pwrlevel);
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 
 	return count;
 }
@@ -286,10 +286,10 @@ static int kgsl_pwrctrl_max_pwrlevel_store(struct device *dev,
 		return count;
 
 	/* If the use specifies a negative number, then don't change anything */
-	if (ret)
-		return ret;
+	if (level < 0)
+		return count;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 
 	/* You can't set a maximum power level lower than the minimum */
 	if (level > pwr->min_pwrlevel)
@@ -306,7 +306,7 @@ static int kgsl_pwrctrl_max_pwrlevel_store(struct device *dev,
 	 */
 	if (max_level > pwr->active_pwrlevel)
 		kgsl_pwrctrl_pwrlevel_change(device, max_level);
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 
 	return count;
 }
@@ -341,10 +341,10 @@ static int kgsl_pwrctrl_min_pwrlevel_store(struct device *dev,
 		return count;
 
 	/* Don't do anything on obviously incorrect values */
-	if (ret)
-		return ret;
+	if (level < 0)
+		return count;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 	if (level > pwr->num_pwrlevels - 2)
 		level = pwr->num_pwrlevels - 2;
 
@@ -363,7 +363,7 @@ static int kgsl_pwrctrl_min_pwrlevel_store(struct device *dev,
 	if (min_level < pwr->active_pwrlevel)
 		kgsl_pwrctrl_pwrlevel_change(device, min_level);
 
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 
 	return count;
 }
@@ -422,10 +422,10 @@ static int kgsl_pwrctrl_max_gpuclk_store(struct device *dev,
 	pwr = &device->pwrctrl;
 
 	ret = sscanf(buf, "%ld", &val);
-	if (ret)
-		return ret;
+	if (ret != 1)
+		return count;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 	level = _get_nearest_pwrlevel(pwr, val);
 	if (level < 0)
 		goto done;
@@ -441,7 +441,7 @@ static int kgsl_pwrctrl_max_gpuclk_store(struct device *dev,
 		kgsl_pwrctrl_pwrlevel_change(device, pwr->thermal_pwrlevel);
 
 done:
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 	return count;
 }
 
@@ -474,15 +474,15 @@ static int kgsl_pwrctrl_gpuclk_store(struct device *dev,
 	pwr = &device->pwrctrl;
 
 	ret = sscanf(buf, "%ld", &val);
-	if (ret)
-		return ret;
+	if (ret != 1)
+		return count;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 	level = _get_nearest_pwrlevel(pwr, val);
 	if (level >= 0)
 		kgsl_pwrctrl_pwrlevel_change(device, level);
 
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 	return count;
 }
 
@@ -519,13 +519,13 @@ static int kgsl_pwrctrl_idle_timer_store(struct device *dev,
 	if (rc)
 		return rc;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 
 	/* Let the timeout be requested in ms, but convert to jiffies. */
 	val /= div;
 	pwr->interval_timeout = val;
 
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 
 	return count;
 }
@@ -561,9 +561,9 @@ static int kgsl_pwrctrl_pmqos_latency_store(struct device *dev,
 	if (rc)
 		return rc;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 	device->pwrctrl.pm_qos_latency = val;
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 
 	return count;
 }
@@ -708,9 +708,9 @@ static int __force_on_store(struct device *dev,
 	if (rc)
 		return rc;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 	__force_on(device, flag, val);
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 
 	return count;
 }
@@ -786,9 +786,9 @@ static ssize_t kgsl_pwrctrl_bus_split_store(struct device *dev,
 	if (rc)
 		return rc;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 	device->pwrctrl.bus_control = val ? true : false;
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 
 	return count;
 }
@@ -1262,7 +1262,7 @@ void kgsl_idle_check(struct work_struct *work)
 	if (device == NULL)
 		return;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 
 	kgsl_pwrscale_update(device);
 
@@ -1286,10 +1286,10 @@ void kgsl_idle_check(struct work_struct *work)
 			if (!device->pwrctrl.irq_last)
 				break;
 			kgsl_pwrctrl_request_state(device, requested_state);
-			kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+			mutex_unlock(&device->mutex);
 			udelay(delay);
 			delay *= 2;
-			kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+			mutex_lock(&device->mutex);
 		}
 
 
@@ -1313,7 +1313,7 @@ void kgsl_idle_check(struct work_struct *work)
 		}
 	}
 
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 }
 EXPORT_SYMBOL(kgsl_idle_check);
 
@@ -1429,6 +1429,8 @@ _sleep(struct kgsl_device *device)
 				kgsl_pwrstate_to_str(device->state));
 		break;
 	}
+
+	kgsl_mmu_disable_clk_on_ts(&device->mmu, 0, false);
 
 	return 0;
 }
@@ -1644,9 +1646,9 @@ int kgsl_active_count_get(struct kgsl_device *device)
 
 	if ((atomic_read(&device->active_cnt) == 0) &&
 		(device->state != KGSL_STATE_ACTIVE)) {
-		kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+		mutex_unlock(&device->mutex);
 		wait_for_completion(&device->hwaccess_gate);
-		kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+		mutex_lock(&device->mutex);
 
 		ret = kgsl_pwrctrl_wake(device, 1);
 	}
@@ -1736,10 +1738,10 @@ int kgsl_active_count_wait(struct kgsl_device *device, int count)
 
 	if (atomic_read(&device->active_cnt) > count) {
 		int ret;
-		kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+		mutex_unlock(&device->mutex);
 		ret = wait_event_timeout(device->active_cnt_wq,
 			_check_active_count(device, count), HZ);
-		kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+		mutex_lock(&device->mutex);
 		result = ret == 0 ? -ETIMEDOUT : 0;
 	}
 

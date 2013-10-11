@@ -1467,7 +1467,7 @@ int mxt_get_self_delta_chk(struct mxt_data *data)
 		}
 
 		for (i = 0; i < NODE_PER_PAGE; i++) {
-			curr_delta =( ((u16)ret_buf[i*2+1] << 8) + (u16)ret_buf[i*2] ); // 음수 맞지
+			curr_delta =( ((u16)ret_buf[i*2+1] << 8) + (u16)ret_buf[i*2] ); // \C0\BD\BC\F6 \B8\C2\C1\F6
 
 			//TOUCH_INFO_MSG("%6hd", curr_delta);
 
@@ -1605,7 +1605,7 @@ int mxt_get_self_delta_chk(struct mxt_data *data)
 	}
 	else if( (global_mxt_data->self_delta_chk[13] < proc_anti_tot_cnt) && (global_mxt_data->ts_data.total_num ==0) )
 	{
-		//현재 Touch Finger 가 있는지 확인
+		//\C7\F6\C0\E7 Touch Finger \B0\A1 \C0獵\C2\C1\F6 확\C0\CE
 		TOUCH_INFO_MSG("Case 4 Fail Proc Anti Tot Count ( %d ), Set Count ( %d ) \n", proc_anti_tot_cnt, global_mxt_data->self_delta_chk[13]);
 		return 1; // recal
 	}
@@ -5578,7 +5578,6 @@ static void mxt_reset_slots(struct mxt_data *data)
 static void mxt_gesture_mode_start(struct mxt_data *data)
 {
 	struct mxt_object *object;
-	int error = 0;
 
 	object = mxt_get_object(data, MXT_PROCI_TOUCH_SEQUENCE_LOGGER_T93);
 	if (!object)
@@ -5620,7 +5619,6 @@ static void mxt_active_mode_start(struct mxt_data *data)
 {
 
 	struct mxt_object *object;
-	int error = 0;
 
 	object = mxt_get_object(data, MXT_PROCI_TOUCH_SEQUENCE_LOGGER_T93);
 	if (!object)
@@ -7529,17 +7527,17 @@ static void async_mxt_init(void *data, async_cookie_t cookie)
 	return;
 }
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 extern int lge_boot_mode_for_touch;
-#endif
+
 
 static int __init mxt_init(void)
 {
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		return -EMLINK;
 	}
-#endif
+
 
 	touch_wq = create_singlethread_workqueue("touch_wq");
 	if (!touch_wq) {
@@ -7560,11 +7558,11 @@ static int __init mxt_init(void)
 
 static void __exit mxt_exit(void)
 {
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		return;
 	}
-#endif
+
 
 	i2c_del_driver(&mxt_driver);
 

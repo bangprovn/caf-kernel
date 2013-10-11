@@ -272,7 +272,7 @@ static void adreno_input_work(struct work_struct *work)
 			struct adreno_device, input_work);
 	struct kgsl_device *device = &adreno_dev->dev;
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 
 	device->flags |= KGSL_FLAG_WAKE_ON_TOUCH;
 
@@ -290,7 +290,7 @@ static void adreno_input_work(struct work_struct *work)
 	 */
 	mod_timer(&device->idle_timer,
 		jiffies + msecs_to_jiffies(_wake_timeout));
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 }
 
 /*
@@ -1205,11 +1205,9 @@ static int adreno_iommu_setstate(struct kgsl_device *device,
 	 * after the command has been retired
 	 */
 	if (result)
-		kgsl_mmu_disable_clk(&device->mmu,
-						KGSL_IOMMU_CONTEXT_USER);
+		kgsl_mmu_disable_clk_on_ts(&device->mmu, 0, false);
 	else
-		kgsl_mmu_disable_clk_on_ts(&device->mmu, rb->global_ts,
-						KGSL_IOMMU_CONTEXT_USER);
+		kgsl_mmu_disable_clk_on_ts(&device->mmu, rb->global_ts, true);
 
 done:
 	kgsl_context_put(context);
@@ -2091,7 +2089,7 @@ static void adreno_start_work(struct work_struct *work)
 	/* Nice ourselves to be higher priority but not too high priority */
 	set_user_nice(current, _wake_nice);
 
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 	/*
 	 *  If adreno start is already called, no need to call it again
 	 *  it can lead to unpredictable behavior if we try to start
@@ -2111,7 +2109,7 @@ static void adreno_start_work(struct work_struct *work)
 		_status = _adreno_start(adreno_dev);
 	else
 		_status = 0;
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 }
 
 /**
@@ -2136,9 +2134,9 @@ static int adreno_start(struct kgsl_device *device, int priority)
 	 * higher priority work queue and wait for it to finish
 	 */
 	queue_work(adreno_wq, &adreno_dev->start_work);
-	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);
+	mutex_unlock(&device->mutex);
 	flush_work(&adreno_dev->start_work);
-	kgsl_mutex_lock(&device->mutex, &device->mutex_owner);
+	mutex_lock(&device->mutex);
 
 	return _status;
 }
@@ -2694,7 +2692,7 @@ static int adreno_setproperty(struct kgsl_device *device,
  * Return true if the RBBM status register for the GPU type indicates that the
  * hardware is idle
  */
-bool adreno_hw_isidle(struct kgsl_device *device)
+static bool adreno_hw_isidle(struct kgsl_device *device)
 {
 	unsigned int reg_rbbm_status;
 	struct adreno_device *adreno_dev = ADRENO_DEVICE(device);
@@ -2806,12 +2804,6 @@ bool adreno_isidle(struct kgsl_device *device)
 		return true;
 
 	rptr = adreno_get_rptr(&adreno_dev->ringbuffer);
-
-	/*
-	 * wptr is updated when we add commands to ringbuffer, add a barrier
-	 * to make sure updated wptr is compared to rptr
-	 */
-	smp_mb();
 
 	if (rptr == adreno_dev->ringbuffer.wptr)
 		return adreno_hw_isidle(device);

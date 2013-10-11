@@ -2964,9 +2964,9 @@ static struct i2c_driver lge_touch_driver = {
 	},
 };
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 extern int lge_boot_mode_for_touch;
-#endif
+
 
 int touch_driver_register_(struct touch_device_driver *driver)
 {
@@ -2974,11 +2974,11 @@ int touch_driver_register_(struct touch_device_driver *driver)
 
 	TOUCH_TRACE_FUNC();
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		return -EMLINK;
 	}
-#endif
+
 
 	if (touch_drv != NULL) {
 		TOUCH_ERR_MSG("CANNOT add new touch-driver\n");
@@ -3013,11 +3013,11 @@ void touch_driver_unregister_(void)
 {
 	TOUCH_TRACE_FUNC();
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		return;
 	}
-#endif
+
 
 	i2c_del_driver(&lge_touch_driver);
 	touch_drv = NULL;

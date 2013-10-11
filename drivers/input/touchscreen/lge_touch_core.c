@@ -4137,9 +4137,9 @@ static void touch_double_tap_wakeup_enable(struct lge_touch_data *ts)
 
 }
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 extern int lge_boot_mode_for_touch;
-#endif
+
 
 static int touch_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
@@ -4619,13 +4619,13 @@ int touch_driver_register(struct touch_device_driver* driver)
 {
 	int ret = 0;
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		TOUCH_INFO_MSG("Chargerlogo mode. Skip probe \n");
 		ret = -EMLINK;
 		goto err_touch_driver_register;
 	}
-#endif
+
 
 	if (unlikely(touch_debug_mask & DEBUG_TRACE))
 		TOUCH_DEBUG_MSG("\n");
@@ -4663,12 +4663,12 @@ err_touch_driver_register:
 void touch_driver_unregister(void)
 {
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		TOUCH_INFO_MSG("Chargerlogo mode. Skip probe \n");
 		return;
 	}
-#endif
+
 
 
 	if (unlikely(touch_debug_mask & DEBUG_TRACE))

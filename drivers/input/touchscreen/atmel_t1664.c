@@ -7598,17 +7598,17 @@ static void async_mxt_init(void *data, async_cookie_t cookie)
 	return;
 }
 
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 extern int lge_boot_mode_for_touch;
-#endif
+
 
 static int __init mxt_init(void)
 {
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		return -EMLINK;
 	}
-#endif
+
 
 	touch_wq = create_singlethread_workqueue("touch_wq");
 	if (!touch_wq) {
@@ -7629,11 +7629,11 @@ static int __init mxt_init(void)
 
 static void __exit mxt_exit(void)
 {
-#ifdef CONFIG_LGE_PM_CHARGING_CHARGERLOGO
+
 	if (lge_boot_mode_for_touch == 2) { // Chargerlogo mode
 		return;
 	}
-#endif
+
 
 	i2c_del_driver(&mxt_driver);
 
