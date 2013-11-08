@@ -311,6 +311,7 @@ static u32 mdss_mdp_perf_calc_pipe_prefill_cmd(struct mdss_mdp_prefill_params
  */
 int mdss_mdp_perf_calc_pipe(struct mdss_mdp_pipe *pipe,
 <<<<<<< HEAD
+<<<<<<< HEAD
 	struct mdss_mdp_perf_params *perf, struct mdss_mdp_img_rect *roi)
 =======
 		struct mdss_mdp_perf_params *perf, int tune)
@@ -322,6 +323,14 @@ int mdss_mdp_perf_calc_pipe(struct mdss_mdp_pipe *pipe,
 	struct mdss_mdp_img_rect src, dst;
 	bool is_fbc = false;
 	struct mdss_mdp_prefill_params prefill_params;
+=======
+	struct mdss_mdp_perf_params *perf, struct mdss_mdp_img_rect *roi, int tune)
+{
+	struct mdss_mdp_mixer *mixer;
+	int fps = DEFAULT_FRAME_RATE;
+	u32 quota, rate, v_total, src_h;
+	struct mdss_mdp_img_rect src, dst;
+>>>>>>> 6f42c1c... mdp: mdss: Tune bandwidth and clock based on ROI
 
 	if (!pipe || !perf || !pipe->mixer)
 		return -EINVAL;
@@ -353,14 +362,18 @@ int mdss_mdp_perf_calc_pipe(struct mdss_mdp_pipe *pipe,
 	if (roi)
 		mdss_mdp_crop_rect(&src, &dst, roi);
 
+<<<<<<< HEAD
 	pr_debug("v_total=%d, xres=%d fps=%d\n", v_total, xres, fps);
 
+=======
+>>>>>>> 6f42c1c... mdp: mdss: Tune bandwidth and clock based on ROI
 	/*
 	 * when doing vertical decimation lines will be skipped, hence there is
 	 * no need to account for these lines in MDP clock or request bus
 	 * bandwidth to fetch them.
 	 */
 	src_h = src.h >> pipe->vert_deci;
+<<<<<<< HEAD
 
 	quota = fps * src.w * src_h;
 
@@ -368,6 +381,10 @@ int mdss_mdp_perf_calc_pipe(struct mdss_mdp_pipe *pipe,
 		 pipe->src.w, src_h, pipe->dst.w, pipe->dst.h, pipe->dst.y,
 		 pipe->src_fmt->bpp, pipe->src_fmt->is_yuv);
 
+=======
+
+	quota = fps * src.w * src_h;
+>>>>>>> 6f42c1c... mdp: mdss: Tune bandwidth and clock based on ROI
 	if (pipe->src_fmt->chroma_sample == MDSS_MDP_CHROMA_420)
 		/*
 		 * with decimation, chroma is not downsampled, this means we
@@ -390,6 +407,7 @@ int mdss_mdp_perf_calc_pipe(struct mdss_mdp_pipe *pipe,
 		quota *= 2; /* bus read + write */
 		perf->bw_overlap = quota;
 	} else {
+<<<<<<< HEAD
 		perf->bw_overlap = (quota / dst.h) * v_total;
 	}
 
@@ -417,6 +435,13 @@ int mdss_mdp_perf_calc_pipe(struct mdss_mdp_pipe *pipe,
 	}
 	else
 		perf->prefill_bytes = 0;
+=======
+		perf->ib_quota = (quota / dst.h) * v_total;
+	}
+
+	perf->ab_quota = quota;
+	perf->mdp_clk_rate = rate;
+>>>>>>> 6f42c1c... mdp: mdss: Tune bandwidth and clock based on ROI
 
 	pr_debug("mixer=%d pnum=%d clk_rate=%u bw_overlap=%llu prefill=%d\n",
 		 mixer->num, pipe->num, perf->mdp_clk_rate, perf->bw_overlap,
@@ -482,10 +507,14 @@ static void mdss_mdp_perf_calc_mixer(struct mdss_mdp_mixer *mixer,
 			continue;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		if (mdss_mdp_perf_calc_pipe(pipe, &tmp, &mixer->roi))
 =======
 		if (mdss_mdp_perf_calc_pipe(pipe, &perf, 0))
 >>>>>>> bb797bd... mdss: use alternate lcd timings in mdp perf check
+=======
+		if (mdss_mdp_perf_calc_pipe(pipe, &perf, &mixer->roi, 0))
+>>>>>>> 6f42c1c... mdp: mdss: Tune bandwidth and clock based on ROI
 			continue;
 		prefill_bytes += tmp.prefill_bytes;
 		bw_overlap[i] = tmp.bw_overlap;

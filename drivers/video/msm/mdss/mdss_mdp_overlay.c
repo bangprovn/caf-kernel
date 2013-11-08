@@ -268,9 +268,13 @@ static int __mdp_pipe_tune_perf(struct mdss_mdp_pipe *pipe)
 
 	for (;;) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		rc = mdss_mdp_perf_calc_pipe(pipe, &perf, NULL);
 =======
 		rc = mdss_mdp_perf_calc_pipe(pipe, &perf,
+=======
+		rc = mdss_mdp_perf_calc_pipe(pipe, &perf, NULL,
+>>>>>>> 6f42c1c... mdp: mdss: Tune bandwidth and clock based on ROI
 			pipe->flags & MDP_SECURE_OVERLAY_SESSION);
 >>>>>>> bb797bd... mdss: use alternate lcd timings in mdp perf check
 
