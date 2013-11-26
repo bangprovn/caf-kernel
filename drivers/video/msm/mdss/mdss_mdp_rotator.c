@@ -224,11 +224,14 @@ static int __mdss_mdp_rotator_to_pipe(struct mdss_mdp_rotator_session *rot,
 	pipe->params_changed++;
 	rot->params_changed = 0;
 
+<<<<<<< HEAD
 	/*
 	 * Clear previous SMP reservations and reserve according
 	 * to the latest configuration
 	 */
 
+=======
+>>>>>>> 100d0af... msm: mdss: Check extra mmb allocated to a pipe
 	ret = mdss_mdp_smp_reserve(pipe);
 	if (ret) {
 		pr_err("unable to mdss_mdp_smp_reserve rot data\n");
