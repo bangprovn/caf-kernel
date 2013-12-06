@@ -962,7 +962,11 @@ int msm_vidc_dqbuf(void *instance, struct v4l2_buffer *b)
 		}
 	}
 
+<<<<<<< HEAD
 	if (!buffer_info && inst->map_output_buffer) {
+=======
+	if (!buffer_info) {
+>>>>>>> 226d21f... msm: vidc: fix issues raised by static analyzer
 		dprintk(VIDC_ERR,
 			"%s: error - no buffer info found in registered list\n",
 			__func__);
