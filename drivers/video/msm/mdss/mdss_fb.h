@@ -1,4 +1,4 @@
-/* Copyright (c) 2008-2013, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2008-2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -201,6 +201,12 @@ struct msm_fb_data_type {
 	wait_queue_head_t idle_wait_q;
 	bool shutdown_pending;
 
+<<<<<<< HEAD
+=======
+	struct task_struct *splash_thread;
+	bool splash_logo_enabled;
+
+>>>>>>> 929da9c... msm: mdss:Add splash logo configuration entry in fb
 	struct msm_fb_backup_type msm_fb_backup;
 	struct completion power_set_comp;
 	u32 is_power_setting;
