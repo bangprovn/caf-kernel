@@ -3322,10 +3322,24 @@ int msm_vidc_check_session_supported(struct msm_vidc_inst *inst)
 
 	rc = msm_vidc_load_supported(inst);
 	if (!rc && inst->capability.capability_set) {
-		rc = call_hfi_op(hdev, capability_check,
-			inst->fmts[OUTPUT_PORT]->fourcc,
-			inst->prop.width[CAPTURE_PORT], &capability->width.max,
-			&capability->height.max);
+		if (inst->prop.width[CAPTURE_PORT] < capability->width.min ||
+			inst->prop.height[CAPTURE_PORT] <
+			capability->height.min) {
+			dprintk(VIDC_ERR,
+				"Unsupported WxH = (%u)x(%u), min supported is - (%u)x(%u)\n",
+				inst->prop.width[CAPTURE_PORT],
+				inst->prop.height[CAPTURE_PORT],
+				capability->width.min,
+				capability->height.min);
+			rc = -ENOTSUPP;
+		}
+		if (!rc) {
+			rc = call_hfi_op(hdev, capability_check,
+				inst->fmts[OUTPUT_PORT]->fourcc,
+				inst->prop.width[CAPTURE_PORT],
+				&capability->width.max,
+				&capability->height.max);
+		}
 
 		if (!rc && (inst->prop.height[CAPTURE_PORT]
 			* inst->prop.width[CAPTURE_PORT] >
@@ -3342,9 +3356,13 @@ int msm_vidc_check_session_supported(struct msm_vidc_inst *inst)
 		mutex_lock(&inst->sync_lock);
 		inst->state = MSM_VIDC_CORE_INVALID;
 		mutex_unlock(&inst->sync_lock);
+<<<<<<< HEAD
 		msm_vidc_queue_v4l2_event(inst,
 			V4L2_EVENT_MSM_VIDC_HW_OVERLOADED);
 		wake_up(&inst->kernel_event_queue);
+=======
+		msm_vidc_queue_v4l2_event(inst, V4L2_EVENT_MSM_VIDC_SYS_ERROR);
+>>>>>>> 5490582... msm: vidc: Add min resolution check for video session
 	}
 	return rc;
 }
