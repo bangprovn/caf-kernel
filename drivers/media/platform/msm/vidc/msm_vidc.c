@@ -963,10 +963,14 @@ int msm_vidc_dqbuf(void *instance, struct v4l2_buffer *b)
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (!buffer_info && inst->map_output_buffer) {
 =======
 	if (!buffer_info) {
 >>>>>>> 226d21f... msm: vidc: fix issues raised by static analyzer
+=======
+	if (!buffer_info && inst->map_output_buffer) {
+>>>>>>> 35b675a... msm: vidc: Check if buffers are mapped before validating buffer_info
 		dprintk(VIDC_ERR,
 			"%s: error - no buffer info found in registered list\n",
 			__func__);
