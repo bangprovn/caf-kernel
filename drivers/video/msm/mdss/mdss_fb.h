@@ -213,7 +213,13 @@ struct msm_fb_data_type {
 	struct task_struct *splash_thread;
 	bool splash_logo_enabled;
 
+<<<<<<< HEAD
 >>>>>>> 929da9c... msm: mdss:Add splash logo configuration entry in fb
+=======
+	wait_queue_head_t ioctl_q;
+	atomic_t ioctl_ref_cnt;
+
+>>>>>>> 5410ebc... msm: mdss: fix race condition between shutdown thread and fb ioctl
 	struct msm_fb_backup_type msm_fb_backup;
 	struct completion power_set_comp;
 	u32 is_power_setting;
