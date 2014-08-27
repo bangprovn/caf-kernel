@@ -116,7 +116,7 @@ static struct wake_lock ear_hook_wake_lock;
  */
 
 #ifdef CONFIG_MACH_LGE // hj74.kim : change value for square reader
-#define WCD9XXX_CS_MEAS_INVALD_RANGE_LOW_MV 130
+#define WCD9XXX_CS_MEAS_INVALD_RANGE_LOW_MV 250
 #else
 #define WCD9XXX_CS_MEAS_INVALD_RANGE_LOW_MV 160
 #endif
